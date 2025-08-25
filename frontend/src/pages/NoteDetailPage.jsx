@@ -64,6 +64,8 @@ const NoteDetailPage = () => {
               toast.success('Note Updated');
               setEditMode(false);
               setNote({ ...note, title, content });
+              setFade(false);
+              setTimeout(() => navigate('/gallery'), 300);
             } catch (error) {
               toast.error('Failed to update note.');
             }
