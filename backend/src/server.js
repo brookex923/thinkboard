@@ -10,7 +10,7 @@ console.log(process.env.MONGO_URL);
 
 const app = express();
 
-connectDB();
+
 
 //middleware
 app.use(express.json())
@@ -22,10 +22,11 @@ app.use((resq, res, next) => {
 
 app.use("/api/notes", notesRoutes);
 
+//first connect db and then start the app
+connectDB().then(() =>{
 
+    app.listen(5001, () => {
+        console.log("Server started on PORT: 5001");
+    });
 
-app.listen(5001, () => {
-    console.log("Server started on PORT: 5001");
-});
-
-
+})
