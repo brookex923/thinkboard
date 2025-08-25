@@ -94,6 +94,9 @@ const NoteDetailPage = () => {
           <div className="animate-fade-in">
             <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center transition-all duration-300">{note.title}</h2>
             <p className="text-gray-700 text-lg whitespace-pre-line mb-6 transition-all duration-300">{note.content}</p>
+            {note.createdAt && (
+              <div className="text-xs text-gray-400 mb-4 text-center">Created: {new Date(note.createdAt).toLocaleString()}</div>
+            )}
             <div className="flex gap-3 mt-2">
               <button onClick={() => { setEditMode(true); setFade(false); setTimeout(() => setFade(true), 300); }} className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-lg hover:scale-105 transition-transform duration-200">Edit</button>
               <button onClick={async () => { setFade(false); setTimeout(async () => { await handleDelete(); }, 300); }} className="flex-1 py-3 rounded-xl bg-red-500 text-white font-semibold shadow-lg hover:scale-105 transition-transform duration-200">Delete</button>
