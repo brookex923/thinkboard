@@ -1,20 +1,42 @@
-import React from 'react'
-import { useNavigate } from 'react-router'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import { toast } from 'react-hot-toast'
 
 const CreatePage = () => {
   const navigate = useNavigate();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Add note creation logic here
-    toast.success('Note Created');
-    navigate('/gallery');
+    if (!title.trim() || !content.trim()) {
+      toast.error('Title and body must not be blank.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.post('http://localhost:5001/api/notes', { title, content });
+      toast.success('Note Created');
+      setTitle("");
+      setContent("");
+      navigate('/gallery');
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Failed to create note.');
+      }
+      console.error('POST /api/notes error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = (e) => {
     e.preventDefault();
-    navigate(-1); // Go back to previous page
+    navigate(-1);
   };
 
   return (
@@ -25,16 +47,22 @@ const CreatePage = () => {
           <input
             type="text"
             placeholder="Title"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
             className="px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/70 text-gray-800 text-lg shadow-sm"
+            disabled={loading}
           />
           <textarea
             placeholder="Write your note here..."
             rows={6}
+            value={content}
+            onChange={e => setContent(e.target.value)}
             className="px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white/70 text-gray-800 text-base shadow-sm resize-none"
+            disabled={loading}
           />
           <div className="flex gap-3 mt-2">
-            <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-lg hover:scale-105 transition-transform duration-200">Create Note</button>
-            <button type="button" onClick={handleCancel} className="flex-1 py-3 rounded-xl bg-gray-200 text-gray-600 font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center justify-center text-center">Cancel</button>
+            <button type="submit" disabled={loading} className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-lg hover:scale-105 transition-transform duration-200 disabled:opacity-60">Create Note</button>
+            <button type="button" onClick={handleCancel} disabled={loading} className="flex-1 py-3 rounded-xl bg-gray-200 text-gray-600 font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center justify-center text-center disabled:opacity-60">Cancel</button>
           </div>
         </form>
       </div>
