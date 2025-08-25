@@ -1,11 +1,27 @@
 import React from 'react'
+import { useNavigate } from 'react-router'
+import { toast } from 'react-hot-toast'
 
 const CreatePage = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // TODO: Add note creation logic here
+    toast.success('Note Created');
+    navigate('/gallery');
+  };
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+    navigate(-1); // Go back to previous page
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-white flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-lg bg-white/80 rounded-3xl shadow-2xl p-10 flex flex-col gap-6 border border-gray-200 backdrop-blur-md">
         <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center">Create a New Note</h2>
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
             type="text"
             placeholder="Title"
@@ -18,7 +34,7 @@ const CreatePage = () => {
           />
           <div className="flex gap-3 mt-2">
             <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-lg hover:scale-105 transition-transform duration-200">Create Note</button>
-            <button type="button" className="flex-1 py-3 rounded-xl bg-gray-200 text-gray-600 font-semibold hover:bg-gray-300 transition-colors duration-200">Cancel</button>
+            <button type="button" onClick={handleCancel} className="flex-1 py-3 rounded-xl bg-gray-200 text-gray-600 font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center justify-center text-center">Cancel</button>
           </div>
         </form>
       </div>

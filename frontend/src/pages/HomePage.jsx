@@ -1,11 +1,40 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router'
-import Navbar from '../components/Navbar'
+import axios from 'axios'
+import toast from 'react-hot-toast'
 
 const HomePage = () => {
+    const [isRateLimited, setIsRateLimited] = React.useState(false);
+    const [notes, setNotes] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+
+    useEffect(() => {
+        const fetchNotes = async () => {
+            try {
+                const res = await axios.get('http://localhost:5001/api/notes')
+                const data = await res.json();
+                console.log(res.data);
+                setNotes(res.data);
+                setIsRateLimited(false);
+            }
+            catch (error) {
+                console.error("Error fetching notes:", error);
+                console.log(error);
+                if(error.response && error.response.status === 429) {
+                    setIsRateLimited(true);
+                }
+                else{
+                    toast.error("Failed to fetch notes. Please try again later.")
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+    })
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-white flex flex-col items-center px-4">
-      <Navbar />
       <div className="w-full max-w-xl bg-white/80 rounded-3xl shadow-2xl p-10 flex flex-col items-center gap-6 border border-gray-200 backdrop-blur-md mt-12">
         <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight mb-2">ThinkBoard</h1>
         <p className="text-lg text-gray-500 mb-6 text-center">Capture your thoughts, ideas, and reminders in a beautiful, minimal space.</p>
@@ -22,7 +51,7 @@ const HomePage = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
 
+}
 export default HomePage
