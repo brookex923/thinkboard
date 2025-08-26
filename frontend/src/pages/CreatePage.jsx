@@ -7,7 +7,14 @@ const CreatePage = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,10 +24,19 @@ const CreatePage = () => {
     }
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5001/api/notes', { title, content });
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', content);
+      if (image) {
+        formData.append('image', image);
+      }
+      const res = await axios.post('http://localhost:5001/api/notes', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       toast.success('Note Created');
       setTitle("");
       setContent("");
+      setImage(null);
       navigate('/gallery');
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
@@ -58,6 +74,13 @@ const CreatePage = () => {
             value={content}
             onChange={e => setContent(e.target.value)}
             className="px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white/70 text-gray-800 text-base shadow-sm resize-none transition-all duration-300"
+            disabled={loading}
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="px-2 py-2 rounded-xl border border-gray-200 bg-white/70 text-gray-800 text-base shadow-sm transition-all duration-300"
             disabled={loading}
           />
           <div className="flex gap-3 mt-2 transition-all duration-300">
