@@ -14,6 +14,14 @@ const noteSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    imageUrl: {
+        type: String,
+        default: ''
+    },
+    imageData: {
+        type: String,
+        default: ''
+    },
 }, { timestamps: true }
 );
 

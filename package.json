@@ -1,0 +1,30 @@
+{
+  "dependencies": {
+    "autoprefixer": "^10.4.21",
+    "daisyui": "^5.1.6",
+    "postcss": "^8.5.6",
+    "react-hot-toast": "^2.6.0",
+    "tailwindcss": "^4.1.12"
+  },
+  "name": "todoapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm install --prefix frontend && npm install --prefix backend && npm run build --prefix frontend",
+    "start": "npm run start --prefix backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brookex923/thinkboard.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brookex923/thinkboard/issues"
+  },
+  "homepage": "https://github.com/brookex923/thinkboard#readme"
+}

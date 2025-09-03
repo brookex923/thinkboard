@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import apiClient, { getUploadUrl } from '../config/axios'
 import toast from 'react-hot-toast'
 
 const GalleryPage = () => {
@@ -12,7 +12,7 @@ const GalleryPage = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const res = await axios.get('http://localhost:5001/api/notes');
+        const res = await apiClient.get('/api/notes');
         setNotes(res.data);
         setIsRateLimited(false);
       } catch (error) {
@@ -67,6 +67,16 @@ const GalleryPage = () => {
               <Link key={note._id} to={`/notes/${note._id}`} className="bg-white rounded-xl shadow p-5 flex flex-col gap-2 border border-gray-100 hover:shadow-md transition-all duration-300 cursor-pointer no-underline">
                 <div className="font-semibold text-lg text-gray-800">{note.title}</div>
                 <div className="text-gray-500 text-sm">{note.content}</div>
+                {note.imageUrl && (
+                  <img src={getUploadUrl(note.imageUrl)} alt="Note" className="w-full max-h-48 object-contain rounded-xl mb-2" />
+                )}
+                {note.imageData && (
+                  <img
+                    src={note.imageData}
+                    alt="Note"
+                    className="w-full max-h-48 object-contain rounded-xl mb-2"
+                  />
+                )}
                 {note.createdAt && (
                   <div className="text-xs text-gray-400 mt-2">{new Date(note.createdAt).toLocaleString()}</div>
                 )}

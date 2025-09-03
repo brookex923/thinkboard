@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import { Link } from 'react-router'
-import axios from 'axios'
+import { Link } from 'react-router-dom'
+import apiClient from '../config/axios'
 import toast from 'react-hot-toast'
 
 const HomePage = () => {
@@ -11,7 +11,7 @@ const HomePage = () => {
     useEffect(() => {
         const fetchNotes = async () => {
             try {
-                const res = await axios.get('http://localhost:5001/api/notes')
+                const res = await apiClient.get('/api/notes')
                 const data = await res.json();
                 console.log(res.data);
                 setNotes(res.data);
