@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import apiClient from '../config/axios'
 import { toast } from 'react-hot-toast'
 
 const CreatePage = () => {
@@ -35,7 +35,7 @@ const CreatePage = () => {
       if (imageData) {
         payload.imageData = imageData;
       }
-      await axios.post('http://localhost:5001/api/notes', payload);
+      await apiClient.post('/api/notes', payload);
       toast.success('Note Created');
       setTitle("");
       setContent("");

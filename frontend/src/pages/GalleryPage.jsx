@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import apiClient, { getUploadUrl } from '../config/axios'
 import toast from 'react-hot-toast'
 
 const GalleryPage = () => {
@@ -12,7 +12,7 @@ const GalleryPage = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const res = await axios.get('http://localhost:5001/api/notes');
+        const res = await apiClient.get('/api/notes');
         setNotes(res.data);
         setIsRateLimited(false);
       } catch (error) {
@@ -68,7 +68,7 @@ const GalleryPage = () => {
                 <div className="font-semibold text-lg text-gray-800">{note.title}</div>
                 <div className="text-gray-500 text-sm">{note.content}</div>
                 {note.imageUrl && (
-                  <img src={`http://localhost:5001${note.imageUrl}`} alt="Note" className="w-full max-h-48 object-contain rounded-xl mb-2" />
+                  <img src={getUploadUrl(note.imageUrl)} alt="Note" className="w-full max-h-48 object-contain rounded-xl mb-2" />
                 )}
                 {note.imageData && (
                   <img

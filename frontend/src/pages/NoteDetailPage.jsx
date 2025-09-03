@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import apiClient from '../config/axios'
 import { toast } from 'react-hot-toast'
 
 const NoteDetailPage = () => {
@@ -20,7 +20,7 @@ const NoteDetailPage = () => {
   useEffect(() => {
     const fetchNote = async () => {
       try {
-        const res = await axios.get(`http://localhost:5001/api/notes/${id}`);
+        const res = await apiClient.get(`/api/notes/${id}`);
         setNote(res.data);
         setTitle(res.data.title);
         setContent(res.data.content);
@@ -37,7 +37,7 @@ const NoteDetailPage = () => {
   const handleDelete = async () => {
     if (!window.confirm('Are you sure you want to delete this note?')) return;
     try {
-      await axios.delete(`http://localhost:5001/api/notes/${id}`);
+      await apiClient.delete(`/api/notes/${id}`);
       toast.success('Note Deleted');
       navigate('/gallery');
     } catch (error) {
@@ -84,7 +84,7 @@ const NoteDetailPage = () => {
               if (removeImage && !imageData) {
                 payload.removeImage = 'true';
               }
-              await axios.put(`http://localhost:5001/api/notes/${id}`, payload);
+              await apiClient.put(`/api/notes/${id}`, payload);
               toast.success('Note Updated');
               setEditMode(false);
               setNote({ ...note, title, content, imageData: imageData && !removeImage ? imageData : '' });
