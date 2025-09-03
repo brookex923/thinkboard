@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: thinkboard-backend
+    env: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URL
+        fromDatabase:
+          name: thinkboard-db
+          property: connectionString
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false
+
+databases:
+  - name: thinkboard-db
+    plan: free
