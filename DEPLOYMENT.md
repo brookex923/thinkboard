@@ -11,6 +11,9 @@ The application will default to `http://localhost:5001` if no environment variab
 Set the environment variable to your production API URL:
 
 ```bash
+# For your deployed app at https://thinkboard-pzza.onrender.com
+VITE_API_BASE_URL=https://thinkboard-pzza.onrender.com
+
 # Example for Vercel
 VITE_API_BASE_URL=https://your-api-domain.com
 
@@ -46,7 +49,7 @@ VITE_API_BASE_URL=https://your-api-domain.com
    - **Build Command**: `cd frontend && npm install && npm run build`
    - **Publish Directory**: `frontend/dist`
 4. **Add Environment Variables:**
-   - `VITE_API_BASE_URL` = Your backend URL (e.g., `https://your-backend.onrender.com`)
+   - `VITE_API_BASE_URL` = `https://thinkboard-pzza.onrender.com`
 5. **Deploy**
 
 ### Vercel
