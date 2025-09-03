@@ -14,6 +14,9 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
+console.log('Environment:', process.env.NODE_ENV);
+console.log('Port:', PORT);
+
 
 
 //middleware
@@ -32,6 +35,11 @@ app.use(express.json())
 app.use(rateLimiter);
 app.use('/uploads', express.static('backend/uploads'));
 
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
 app.use("/api/notes", notesRoutes);
 
 if(process.env.NODE_ENV === 'production'){
@@ -45,7 +53,7 @@ if(process.env.NODE_ENV === 'production'){
 //first connect db and then start the app
 connectDB().then(() =>{
 
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
         console.log(`Server started on PORT: ${PORT}`);
     });
 
