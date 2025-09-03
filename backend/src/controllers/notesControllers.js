@@ -28,8 +28,8 @@ export async function getNoteById(req, res) {
 
 export async function createNote(req, res){
     try{
-        const { title, content } = req.body;
-        const newNote = new Note({ title, content });
+        const { title, content, imageData } = req.body;
+        const newNote = new Note({ title, content, imageData });
         await newNote.save();
         res.status(201).json(newNote);
     }
@@ -37,16 +37,21 @@ export async function createNote(req, res){
         console.error("Error creating note:", error);
         res.status(500).json({ message: "Internal server error" });
     }
-
 };
 
 export async function updateNote(req, res){
     try {
         const { id } = req.params;
-        const { title, content } = req.body;
+        const { title, content, imageData, removeImage } = req.body;
+        let updateFields = { title, content };
+        if (typeof imageData === 'string') {
+            updateFields.imageData = imageData;
+        } else if (removeImage === 'true') {
+            updateFields.imageData = '';
+        }
         const updatedNote = await Note.findByIdAndUpdate(
             id,
-            { title, content },
+            updateFields,
             { new: true }
         );
         res.status(200).json(updatedNote);

@@ -12,6 +12,8 @@ const NoteDetailPage = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
+  const [imageData, setImageData] = useState("");
+  const [removeImage, setRemoveImage] = useState(false);
   const [fade, setFade] = useState(true);
   const [enlarge, setEnlarge] = useState(false);
 
@@ -48,9 +50,15 @@ const NoteDetailPage = () => {
     setTimeout(() => navigate(to), 300);
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageData(reader.result);
+        setImage(file);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -69,20 +77,20 @@ const NoteDetailPage = () => {
               return;
             }
             try {
-              const formData = new FormData();
-              formData.append('title', title);
-              formData.append('content', content);
-              if (image) {
-                formData.append('image', image);
+              const payload = { title, content };
+              if (imageData && !removeImage) {
+                payload.imageData = imageData;
               }
-              await axios.put(`http://localhost:5001/api/notes/${id}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-              });
+              if (removeImage && !imageData) {
+                payload.removeImage = 'true';
+              }
+              await axios.put(`http://localhost:5001/api/notes/${id}`, payload);
               toast.success('Note Updated');
               setEditMode(false);
-              setNote({ ...note, title, content, imageUrl: image ? URL.createObjectURL(image) : note.imageUrl });
+              setNote({ ...note, title, content, imageData: imageData && !removeImage ? imageData : '' });
               setFade(false);
               setTimeout(() => navigate('/gallery'), 300);
+              setRemoveImage(false);
             } catch (error) {
               toast.error('Failed to update note.');
             }
@@ -106,6 +114,23 @@ const NoteDetailPage = () => {
               className="px-2 py-2 rounded-xl border border-gray-200 bg-white/70 text-gray-800 text-base shadow-sm transition-all duration-300"
               disabled={loading}
             />
+            {/* Show image preview and delete button in edit mode */}
+            {editMode && (imageData || note.imageData) && (
+              <div className="w-full flex flex-col items-center mb-2">
+                <img
+                  src={imageData ? imageData : note.imageData}
+                  alt="Note"
+                  className="w-full max-h-64 object-contain rounded-xl mb-2"
+                />
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg font-semibold shadow hover:bg-red-600 transition-colors duration-200"
+                  onClick={() => { setImage(null); setImageData(""); setRemoveImage(true); setNote({ ...note, imageData: '' }); }}
+                >
+                  Delete Current Picture
+                </button>
+              </div>
+            )}
             <div className="flex gap-3 mt-2">
               <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-lg hover:scale-105 transition-transform duration-200"
                 onClick={() => setFade(false)}>
@@ -118,32 +143,22 @@ const NoteDetailPage = () => {
           <div className="animate-fade-in">
             <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center transition-all duration-300">{note.title}</h2>
             <p className="text-gray-700 text-lg whitespace-pre-line mb-6 transition-all duration-300">{note.content}</p>
-            {note.imageUrl && (
+            {/* Only show image and enlarge in view mode */}
+            {!editMode && note.imageData && (
               <div className="relative w-full flex flex-col items-center">
                 <img
-                  src={image ? URL.createObjectURL(image) : `http://localhost:5001${note.imageUrl}`}
+                  src={note.imageData}
                   alt="Note"
                   className="w-full max-h-64 object-contain rounded-xl mb-4 cursor-zoom-in transition-transform duration-200 hover:scale-105"
                   onClick={() => setEnlarge(true)}
                 />
-                {/* Show delete (X) button in edit mode if image exists */}
-                {editMode && (image || note.imageUrl) && (
-                  <button
-                    type="button"
-                    className="absolute top-2 right-2 bg-white/80 hover:bg-red-500 hover:text-white text-gray-700 rounded-full p-1 shadow transition-colors duration-200 z-10 border border-gray-300"
-                    title="Remove image"
-                    onClick={() => { setImage(null); setNote({ ...note, imageUrl: '' }); }}
-                  >
-                    &times;
-                  </button>
-                )}
                 {enlarge && (
                   <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in"
                     onClick={() => setEnlarge(false)}
                   >
                     <img
-                      src={image ? URL.createObjectURL(image) : `http://localhost:5001${note.imageUrl}`}
+                      src={note.imageData}
                       alt="Enlarged Note"
                       className="max-w-3xl max-h-[80vh] rounded-2xl shadow-2xl border-4 border-white"
                     />

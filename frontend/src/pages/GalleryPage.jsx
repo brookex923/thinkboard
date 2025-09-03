@@ -70,6 +70,13 @@ const GalleryPage = () => {
                 {note.imageUrl && (
                   <img src={`http://localhost:5001${note.imageUrl}`} alt="Note" className="w-full max-h-48 object-contain rounded-xl mb-2" />
                 )}
+                {note.imageData && (
+                  <img
+                    src={note.imageData}
+                    alt="Note"
+                    className="w-full max-h-48 object-contain rounded-xl mb-2"
+                  />
+                )}
                 {note.createdAt && (
                   <div className="text-xs text-gray-400 mt-2">{new Date(note.createdAt).toLocaleString()}</div>
                 )}
